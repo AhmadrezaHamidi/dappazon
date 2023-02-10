@@ -17,6 +17,11 @@ contract Dappazon {
 
     event List(string name, uint256 cost, uint256 quantity);
 
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     constructor() {
         owner = msg.sender;
     }
@@ -30,7 +35,7 @@ contract Dappazon {
         uint256 _cost,
         uint256 _rating,
         uint256 _stock
-    ) public {
+    ) public onlyOwner {
         Item memory item = Item(
             _id,
             _name,
