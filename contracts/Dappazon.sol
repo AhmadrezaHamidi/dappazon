@@ -63,6 +63,8 @@ contract Dappazon {
     function buy(uint256 _id) public payable {
         //fetch item
         Item memory item = items[_id];
+        require(msg.value >= item.cost);
+        require(item.stock > 0);
         // create an order
         Order memory order = Order(block.timestamp, item);
         // save order to chain
@@ -70,6 +72,12 @@ contract Dappazon {
         orders[msg.sender][orderCount[msg.sender]] = order;
 
         items[_id].stock = item.stock - 1;
+        emit Buy(msg.sender, orderCount[msg.sender], item.id);
     }
+
     //withdraw funds
+    function withdraw() public onlyOwner {
+        (bool success, ) = owner.call{value: address(this).balance}("");
+        require(success);
+    }
 }
